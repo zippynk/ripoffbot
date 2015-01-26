@@ -6,6 +6,8 @@ Modified to be a mailbot ripoff by zippynk. https://github.com/zippynk/ripoffbot
 
 To run ripoffbot, type "python ripoffbot.py <host> <channel (no #)> [--ssl|--plain] <nick>"
 
+
+
 This Source Code Form is subject to the terms of the Mozilla Public
 
 License, v. 2.0. If a copy of the MPL was not distributed with this
