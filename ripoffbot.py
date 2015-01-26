@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-#thisisatest
+
 #  To run ripoffbot, type "python ripoffbot.py <host> <channel (no #)> [--ssl|--plain] <nick>"
 
 #  A fork of jokebot, by Hardmath123. https://github.com/hardmath123/jokebot
