@@ -96,7 +96,7 @@ def got_message(message):
         print "Joining..."
     elif words[1] == 'PRIVMSG' and words[2] == CHANNEL and '@tell' in words[3] and connected:
         # Someone probably said `@tell`.
-        if words[4] == NICK or :
+        if words[4] == NICK:
             s.sendall("PRIVMSG %s :"%(CHANNEL) +name +": I'm right here!" + "\r\n")
         else:
             messages.append([name,words[4],' '.join(words[5:len(words)])])
