@@ -1,6 +1,6 @@
 # Ripoffbot
 
-A mailbot-like fork of jokebot, by Hardmath123. https://github.com/hardmath123/jokebot
+A mailbot-like fork of jokebot, originally by Hardmath123. https://github.com/hardmath123/jokebot
 
 Modified to be a mailbot ripoff by zippynk. https://github.com/zippynk/ripoffbot
 
