@@ -10,7 +10,7 @@
 #  file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 #  Things that still need to be implemented:
-#  'some time' needs to be replaced with Time since the message that it's currently dealing with was sent (not implemented)
+#  'some time' needs to be replaced with Time since the message that it's currently dealing with was sent (implemented, currently in testing)
 
 import socket
 import select
@@ -111,12 +111,12 @@ def got_message(message):
                 delta = datetime.now()-messages[i][5]
                 if delta.days > 365:
                     if int(round(float(delta.days)/365.0)) == 1:
-                        deltastring = "a year ago"
+                        deltastring = "A year ago"
                     else:
                         deltastring = str(int(round(float(delta.days)/365.0))) +" years ago"
                 elif delta.days > 30:
                     if int(round(float(delta.days)/30.0)) == 1:
-                        deltastring = "a month ago"
+                        deltastring = "A month ago"
                     else:
                         deltastring = str(int(round(float(delta.days)/30.0))) +" months ago"
                 elif delta.days > 7:
@@ -124,28 +124,30 @@ def got_message(message):
                 elif delta.days > 0:
                     if delta.seconds >= 43200:
                         if delta.days+1 == 1:
-                            deltastring = "a day ago"
+                            deltastring = "A day ago"
                         else:
                             deltastring = str(delta.days+1) +" days ago"
                     else:
                         if delta.days == 1:
-                            deltastring = "a day ago"
+                            deltastring = "A day ago"
                         else:
                             deltastring = str(delta.days) +" days ago"
                 elif delta.seconds > 3600:
                     if int(round(float(delta.seconds)/3600.0)) == 1:
-                        deltastring = "an hour ago"
+                        deltastring = "An hour ago"
                     else:
                         deltastring = str(int(round(float(delta.seconds)/3600.0))) +" hours ago"
                 elif delta.seconds > 60:
                     if int(round(float(delta.seconds)/60.0)) == 1:
-                        deltastring = "a minute ago"
+                        deltastring = "A minute ago"
                     else:
                         deltastring = str(int(round(float(delta.seconds)/60.0))) +" minutes ago"
                 elif delta.seconds > 30: # no "a second ago", since it has to be at least 30 seconds ago
                     deltastring = str(delta.seconds) +" seconds ago"
+                elif delta.days < 0 or delta.seconds < 0:
+                    deltastring = "The timing of this is a little unclear, but at some point or another"
                 else:
-                    deltastring = "moments ago"
+                    deltastring = "Moments ago"
                 if messages[i][3] == False:
                     s.sendall("PRIVMSG %s :"%(CHANNEL if words[2] == CHANNEL else name) +name +": " +deltastring +', ' +messages[i][0] +' said ' +messages[i][2] + "\r\n")
                     if words[2] == NICK:
@@ -154,7 +156,7 @@ def got_message(message):
                         else: # If the message was not sent via a public channel, meaning it was sent via a private message.
                             s.sendall("PRIVMSG %s :"%(messages[i][0]) +messages[i][0] +": Notified " +name +".\r\n")
                 else:
-                    s.sendall("PRIVMSG %s :"%(name) +name +": " +'some time' +' ago, ' +messages[i][0] +' said ' +messages[i][2] + "\r\n")
+                    s.sendall("PRIVMSG %s :"%(name) +name +": " +deltastring +', ' +messages[i][0] +' said ' +messages[i][2] + "\r\n")
                     s.sendall("PRIVMSG %s :"%(messages[i][0]) +messages[i][0] +": Notified " +name +".\r\n")
                 messagesToPop.append(i)
         if len(messagesToPop) > 0:
