@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-#  To run ripoffbot, type "python ripoffbot.py <host> <channel (no #)> [--ssl|--plain] <nick>"
+#  To run ripoffbot, type `python ripoffbot.py <host> <channel (no #)> [--ssl|--plain] <nick>` into a terminal.
 
 #  A fork of jokebot, by Hardmath123. https://github.com/hardmath123/jokebot
 #  Modified to be a mailbot ripoff by Nathan Krantz-Fire (a.k.a zippynk). https://github.com/zippynk/ripoffbot
@@ -9,8 +9,6 @@
 #  License, v. 2.0. If a copy of the MPL was not distributed with this
 #  file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-#  Things that still need to be implemented:
-#  'some time' needs to be replaced with Time since the message that it's currently dealing with was sent (implemented, currently in testing)
 
 import socket
 import select
@@ -21,7 +19,7 @@ import time
 import os
 import pickle
 from datetime import datetime
-
+import timestampcompare
 
 
 thisVersion = [0,1,1] # The version of ripoffbot, as a list of numbers (eg [0,1,0] means "v0.1.0")
@@ -108,46 +106,7 @@ def got_message(message):
         messagesToPop = []
         for i in range(len(messages)):
             if messages[i][1] == name:
-                delta = datetime.now()-messages[i][5]
-                if delta.days >= 365:
-                    if int(round(float(delta.days)/365.0)) == 1:
-                        deltastring = "A year ago"
-                    else:
-                        deltastring = str(int(round(float(delta.days)/365.0))) +" years ago"
-                elif delta.days >= 30:
-                    if int(round(float(delta.days)/30.0)) == 1:
-                        deltastring = "A month ago"
-                    else:
-                        deltastring = str(int(round(float(delta.days)/30.0))) +" months ago"
-                elif delta.days > 7:
-                    deltastring = str(int(round(float(delta.days)/7.0))) +" weeks ago"
-                elif delta.days >= 1:
-                    if delta.seconds >= 43200:
-                        if delta.days+1 == 1:
-                            deltastring = "A day ago"
-                        else:
-                            deltastring = str(delta.days+1) +" days ago"
-                    else:
-                        if delta.days == 1:
-                            deltastring = "A day ago"
-                        else:
-                            deltastring = str(delta.days) +" days ago"
-                elif delta.seconds >= 3600:
-                    if int(round(float(delta.seconds)/3600.0)) == 1:
-                        deltastring = "An hour ago"
-                    else:
-                        deltastring = str(int(round(float(delta.seconds)/3600.0))) +" hours ago"
-                elif delta.seconds >= 60:
-                    if int(round(float(delta.seconds)/60.0)) == 1:
-                        deltastring = "A minute ago"
-                    else:
-                        deltastring = str(int(round(float(delta.seconds)/60.0))) +" minutes ago"
-                elif delta.seconds >= 30: # no "a second ago", since it has to be at least 30 seconds ago
-                    deltastring = str(delta.seconds) +" seconds ago"
-                elif delta.days < 0 or delta.seconds < 0:
-                    deltastring = "The timing of this is a little unclear, but at some point or another"
-                else:
-                    deltastring = "Moments ago"
+                deltastring = timestampcompare.usefulComparison(datetime.now(),messages[i][5])
                 if messages[i][3] == False:
                     s.sendall("PRIVMSG %s :"%(CHANNEL if words[2] == CHANNEL else name) +name +": " +deltastring +', ' +messages[i][0] +' said ' +messages[i][2] + "\r\n")
                     if words[2] == NICK:
