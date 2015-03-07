@@ -2,7 +2,7 @@
 
 Ripoffbot is an IRC mailbot. It is based off and is of jokebot by Hardmath123, and was modified into  a ripoff of a certain IRC mailbot by Nathan Krantz-Fire (a.k.a zippynk). However, since then, it has gained several new features that said mailbot does not include.
 
-To run ripoffbot, type `python ripoffbot.py <host> <channel (no #)> [--ssl|--plain] <nick>`.
+To run ripoffbot, type `python ripoffbot.py <host> <channel (no #)> [--ssl|--plain] <nick>` into a terminal, replacing the placeholders with your configuration.
 
 WARNING: THIS IS A DEVELOPMENT VERSION! USE AT YOUR OWN RISK!
 

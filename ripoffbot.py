@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-#  To run ripoffbot, type `python ripoffbot.py <host> <channel (no #)> [--ssl|--plain] <nick>` into a terminal.
+#  To run ripoffbot, type `python ripoffbot.py <host> <channel (no #)> [--ssl|--plain] <nick>` into a terminal, replacing the placeholders with your configuration.
 
 #  A fork of jokebot, by Hardmath123. https://github.com/hardmath123/jokebot
 #  Modified to be a mailbot ripoff by Nathan Krantz-Fire (a.k.a zippynk). https://github.com/zippynk/ripoffbot
