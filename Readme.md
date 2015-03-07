@@ -2,7 +2,7 @@
 
 A mailbot-like fork of jokebot, originally by Hardmath123. https://github.com/hardmath123/jokebot
 
-Modified to be a mailbot ripoff by zippynk. https://github.com/zippynk/ripoffbot
+Modified to be a mailbot ripoff by Nathan Krantz-Fire (a.k.a zippynk). https://github.com/zippynk/ripoffbot
 
 To run ripoffbot, type "python ripoffbot.py <host> <channel (no #)> [--ssl|--plain] <nick>"
 
