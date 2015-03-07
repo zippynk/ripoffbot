@@ -15,6 +15,7 @@ WARNING: THIS IS A DEVELOPMENT VERSION! USE AT YOUR OWN RISK!
 
 `@help` displays a message similar to this guide, but tailored to IRC users. (Not implemented yet)
 
+# Database
 
 Ripoffbot stores messages in a file titled `.ripoffbot_database.p` in the home directory of the account that runs it.
 
