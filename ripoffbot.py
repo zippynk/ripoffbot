@@ -108,7 +108,7 @@ def got_message(message):
         messagesToPop = []
         for i in range(len(messages)):
             if messages[i][1] == name:
-                delta = messages[i][5]-datetime.now()
+                delta = datetime.now()-messages[i][5]
                 if delta.days > 365:
                     if int(round(float(delta.days)/365.0)) == 1:
                         deltastring = "a year ago"
@@ -121,7 +121,7 @@ def got_message(message):
                         deltastring = str(int(round(float(delta.days)/30.0))) +" months ago"
                 elif delta.days > 7:
                     deltastring = str(int(round(float(delta.days)/7.0))) +" weeks ago"
-                elif delta.days != -1:
+                elif delta.days > 0:
                     if delta.seconds >= 43200:
                         if delta.days+1 == 1:
                             deltastring = "a day ago"
@@ -145,7 +145,7 @@ def got_message(message):
                 elif delta.seconds > 30: # no "a second ago", since it has to be at least 30 seconds ago
                     deltastring = str(delta.seconds) +" seconds ago"
                 else:
-                    deltastring == "just now"
+                    deltastring = "moments ago"
                 if messages[i][3] == False:
                     s.sendall("PRIVMSG %s :"%(CHANNEL if words[2] == CHANNEL else name) +name +": " +deltastring +', ' +messages[i][0] +' said ' +messages[i][2] + "\r\n")
                     if words[2] == NICK:
