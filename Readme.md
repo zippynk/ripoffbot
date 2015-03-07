@@ -12,9 +12,9 @@ WARNING: THIS IS A DEVELOPMENT VERSION! USE AT YOUR OWN RISK!
 
 `@tell recipient message` delivers `message` to `recipient` when they are next "seen" saying something. If they are "seen" next in a private message to ripoffbot, `message` will be delivered in a reply to that message, and ripoffbot will send a notification message to the sender in the from that the sender sent the original `@tell` command (either in the public channel or via a private message).
 
-`@privtell recipient message` delivers `message` to `recipient` via a private message when they are next "seen" saying something. Wherever they are seen, `message` will still be sent to them privately. Upon delivery, ripoffbot will privately send a notification message to the sender.
+`@privtell recipient message` delivers `message` to `recipient` via a private message when they are next "seen" saying something. Wherever they are seen, `message` will still be sent to them privately. Upon delivery, ripoffbot will privately send a notification message to the sender. Not available in classic mode.
 
-`@help` displays a message similar to this guide, but tailored to IRC users. (Not implemented yet)
+`@help` displays a message similar to this guide, but tailored to IRC users. Not available in classic mode.
 
 # Database
 
