@@ -7,7 +7,7 @@ To run ripoffbot, type `python ripoffbot.py <host> <channel (no #)> [--ssl|--pla
 WARNING: THIS IS A DEVELOPMENT VERSION! USE AT YOUR OWN RISK!
 
 
-Commands (run from IRC):
+# Commands (run from IRC):
 
 `@tell recipient message` delivers `message` to `recipient` when they are next "seen" saying something. If they are "seen" next in a private message to ripoffbot, `message` will be delivered in a reply to that message, and ripoffbot will send a notification message to the sender in the from that the sender sent the original `@tell` command (either in the public channel or via a private message).
 
@@ -18,6 +18,7 @@ Commands (run from IRC):
 
 Ripoffbot stores messages in a file titled `.ripoffbot_database.p` in the home directory of the account that runs it.
 
+# License
 
 This Source Code Form is subject to the terms of the Mozilla Public
 
@@ -25,7 +26,8 @@ License, v. 2.0. If a copy of the MPL was not distributed with this
 
 file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-
-Jokebot source code: https://github.com/hardmath123/jokebot
+# Source/Attribution
 
 Ripoffbot source code: https://github.com/zippynk/ripoffbot
+
+Jokebot source code: https://github.com/hardmath123/jokebot
