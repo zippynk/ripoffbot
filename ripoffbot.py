@@ -24,7 +24,7 @@ from datetime import datetime
 import timestampcompare
 
 
-thisVersion = [0,1,1] # The version of ripoffbot, as a list of numbers (eg [0,1,0] means "v0.1.0")
+thisVersion = [0,2,0] # The version of ripoffbot, as a list of numbers (eg [0,1,0] means "v0.1.0")
 
 if len(sys.argv) != 5 and len(sys.argv) != 6:
     print "Usage: python ripoffbot.py <host> <channel (no #)> [--ssl|--plain] <nick> [--classic]"
@@ -41,7 +41,7 @@ if not raw_input("Are you sure you want to proceed? (y/n) ").lower() in ["yes","
 
 if os.path.isfile(os.path.expanduser("~") +'/.ripoffbot_database.p'):
     dbLoad = pickle.load(open(os.path.expanduser("~") +'/.ripoffbot_database.p','rb'))
-    if dbLoad['version'] == [0,1,1]:
+    if dbLoad['version'] == [0,2,0]:
         messages = dbLoad['messages']
     else:
         print "This database was created with an old or unknown version of ripoffbot. Please use the newest version (or correct fork) and try again. If this is not possible, move or delete the file '~/.ripoffbot_database.p' and re-run ripoffbot. A new database will be created automatically."
@@ -115,26 +115,6 @@ def got_message(message):
             else:
                 if writing == True:
                     name = name +i
-        if not CLASSICMODE:
-            messagesToPop = []
-            for i in range(len(messages)):
-                if messages[i][1] == name:
-                    deltastring = timestampcompare.usefulComparison(datetime.now(),messages[i][5])
-                    if messages[i][3] == False:
-                        s.sendall("PRIVMSG %s :"%(CHANNEL if words[2] == CHANNEL else name) +name +": " +deltastring +', ' +messages[i][0] +' said ' +messages[i][2] + "\r\n")
-                        if words[2] == NICK:
-                            if messages[i][4] == True: # If the message was sent via a public channel.
-                                s.sendall("PRIVMSG %s :"%(CHANNEL) +messages[i][0] +": Notified " +name +".\r\n")
-                            else: # If the message was not sent via a public channel, meaning it was sent via a private message.
-                                s.sendall("PRIVMSG %s :"%(messages[i][0]) +messages[i][0] +": Notified " +name +".\r\n")
-                    else:
-                        s.sendall("PRIVMSG %s :"%(name) +name +": " +deltastring +', ' +messages[i][0] +' said ' +messages[i][2] + "\r\n")
-                        s.sendall("PRIVMSG %s :"%(messages[i][0]) +messages[i][0] +": Notified " +name +".\r\n")
-                    messagesToPop.append(i)
-            if len(messagesToPop) > 0:
-                for i in sorted(messagesToPop, reverse=True):
-                    messages.pop(i)
-                saveDb()
     if words[1] == '001' and not connected:
         # As per section 5.1 of the RFC, 001 is the numeric response for
         # a successful connection/welcome message.
@@ -153,7 +133,7 @@ def got_message(message):
                 saveDb()
                 s.sendall("PRIVMSG %s :"%(CHANNEL if words[2] == CHANNEL else name) +name +": I'll let them know!" + "\r\n")
     elif words[1] == 'PRIVMSG' and (words[2] == CHANNEL or words[2] == NICK) and '@help' in words[3] and connected and not CLASSICMODE:
-        s.sendall("PRIVMSG %s :"%(CHANNEL if words[2] == CHANNEL else name) +"This mailbot uses the ripoffbot software, created by Nathan Krantz-Fire (a.k.a zippynk), and based on Jokebot by Hardmath123." +"\r\n")
+        s.sendall("PRIVMSG %s :"%(CHANNEL if words[2] == CHANNEL else name) +"This mailbot uses the ripoffbot software, which is created by Nathan Krantz-Fire (a.k.a zippynk), and based on Jokebot by Hardmath123." +"\r\n")
         s.sendall("PRIVMSG %s :"%(CHANNEL if words[2] == CHANNEL else name) +" " +"\r\n")
         s.sendall("PRIVMSG %s :"%(CHANNEL if words[2] == CHANNEL else name) +"WARNING: THIS IS A DEVELOPMENT VERSION! USE AT YOUR OWN RISK!" +"\r\n") # Comment this out for release versions.
         s.sendall("PRIVMSG %s :"%(CHANNEL if words[2] == CHANNEL else name) +" " +"\r\n")
@@ -173,6 +153,26 @@ def got_message(message):
                 deltastring = timestampcompare.usefulComparison(datetime.now(),messages[i][5])
                 if messages[i][3] == False:
                     s.sendall("PRIVMSG %s :"%(CHANNEL if words[2] == CHANNEL else name) +name +": " +deltastring +', ' +messages[i][0] +' said ' +messages[i][2] + "\r\n")
+                else:
+                    s.sendall("PRIVMSG %s :"%(name) +name +": " +deltastring +', ' +messages[i][0] +' said ' +messages[i][2] + "\r\n")
+                    s.sendall("PRIVMSG %s :"%(messages[i][0]) +messages[i][0] +": Notified " +name +".\r\n")
+                messagesToPop.append(i)
+        if len(messagesToPop) > 0:
+            for i in sorted(messagesToPop, reverse=True):
+                messages.pop(i)
+            saveDb()
+    else:
+        messagesToPop = []
+        for i in range(len(messages)):
+            if messages[i][1] == name:
+                deltastring = timestampcompare.usefulComparison(datetime.now(),messages[i][5])
+                if messages[i][3] == False:
+                    s.sendall("PRIVMSG %s :"%(CHANNEL if words[2] == CHANNEL else name) +name +": " +deltastring +', ' +messages[i][0] +' said ' +messages[i][2] + "\r\n")
+                    if words[2] == NICK:
+                        if messages[i][4] == True: # If the message was sent via a public channel.
+                            s.sendall("PRIVMSG %s :"%(CHANNEL) +messages[i][0] +": Notified " +name +".\r\n")
+                        else: # If the message was not sent via a public channel, meaning it was sent via a private message.
+                            s.sendall("PRIVMSG %s :"%(messages[i][0]) +messages[i][0] +": Notified " +name +".\r\n")
                 else:
                     s.sendall("PRIVMSG %s :"%(name) +name +": " +deltastring +', ' +messages[i][0] +' said ' +messages[i][2] + "\r\n")
                     s.sendall("PRIVMSG %s :"%(messages[i][0]) +messages[i][0] +": Notified " +name +".\r\n")
