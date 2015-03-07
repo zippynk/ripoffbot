@@ -11,7 +11,6 @@
 
 #  Things that still need to be implemented:
 #  'some time' needs to be replaced with Time since the message that it's currently dealing with was sent (not implemented)
-#  @help (not implemented)
 
 import socket
 import select
@@ -21,6 +20,7 @@ import sys
 import time
 import os
 import pickle
+from datetime import datetime
 
 
 
@@ -108,8 +108,46 @@ def got_message(message):
         messagesToPop = []
         for i in range(len(messages)):
             if messages[i][1] == name:
+                delta = messages[i][5]-datetime.now()
+                if delta.days > 365:
+                    if int(round(float(delta.days)/365.0)) == 1:
+                        deltastring = "a year ago"
+                    else:
+                        deltastring = str(int(round(float(delta.days)/365.0))) +" years ago"
+                elif delta.days > 30:
+                    if int(round(float(delta.days)/30.0)) == 1:
+                        deltastring = "a month ago"
+                    else:
+                        deltastring = str(int(round(float(delta.days)/30.0))) +" months ago"
+                elif delta.days > 7:
+                    deltastring = str(int(round(float(delta.days)/7.0))) +" weeks ago"
+                elif delta.days != -1:
+                    if delta.seconds >= 43200:
+                        if delta.days+1 == 1:
+                            deltastring = "a day ago"
+                        else:
+                            deltastring = str(delta.days+1) +" days ago"
+                    else:
+                        if delta.days == 1:
+                            deltastring = "a day ago"
+                        else:
+                            deltastring = str(delta.days) +" days ago"
+                elif delta.seconds > 3600:
+                    if int(round(float(delta.seconds)/3600.0)) == 1:
+                        deltastring = "an hour ago"
+                    else:
+                        deltastring = str(int(round(float(delta.seconds)/3600.0))) +" hours ago"
+                elif delta.seconds > 60:
+                    if int(round(float(delta.seconds)/60.0)) == 1:
+                        deltastring = "a minute ago"
+                    else:
+                        deltastring = str(int(round(float(delta.seconds)/60.0))) +" minutes ago"
+                elif delta.seconds > 30: # no "a second ago", since it has to be at least 30 seconds ago
+                    deltastring = str(delta.seconds) +" seconds ago"
+                else:
+                    deltastring == "just now"
                 if messages[i][3] == False:
-                    s.sendall("PRIVMSG %s :"%(CHANNEL if words[2] == CHANNEL else name) +name +": " +'some time' +' ago, ' +messages[i][0] +' said ' +messages[i][2] + "\r\n")
+                    s.sendall("PRIVMSG %s :"%(CHANNEL if words[2] == CHANNEL else name) +name +": " +deltastring +', ' +messages[i][0] +' said ' +messages[i][2] + "\r\n")
                     if words[2] == NICK:
                         if messages[i][4] == True: # If the message was sent via a public channel.
                             s.sendall("PRIVMSG %s :"%(CHANNEL) +messages[i][0] +": Notified " +name +".\r\n")
@@ -137,8 +175,22 @@ def got_message(message):
             if '@privtell' in words[3] and words[2] == CHANNEL:
                 s.sendall("PRIVMSG %s :"%(CHANNEL if words[2] == CHANNEL else name) +name +": You can't use @privtell in a public channel - only in private messages. Please use @tell or resend using @privtell in a private message to me. Type @help for more information." + "\r\n")
             else:
-                messages.append([name,words[4],' '.join(words[5:len(words)]),'@privtell' in words[3],words[2] == CHANNEL])
+                messages.append([name,words[4],' '.join(words[5:len(words)]),'@privtell' in words[3],words[2] == CHANNEL,datetime.now()])
                 saveDb()
                 s.sendall("PRIVMSG %s :"%(CHANNEL if words[2] == CHANNEL else name) +name +": I'll let them know!" + "\r\n")
+    elif words[1] == 'PRIVMSG' and (words[2] == CHANNEL or words[2] == NICK) and '@help' in words[3] and connected:
+        s.sendall("PRIVMSG %s :"%(CHANNEL if words[2] == CHANNEL else name) +"This mailbot uses the ripoffbot software, created by Nathan Krantz-Fire (a.k.a zippynk), and based on Jokebot by Hardmath123." +"\r\n")
+        s.sendall("PRIVMSG %s :"%(CHANNEL if words[2] == CHANNEL else name) +" " +"\r\n")
+        s.sendall("PRIVMSG %s :"%(CHANNEL if words[2] == CHANNEL else name) +"WARNING: THIS IS A DEVELOPMENT VERSION! USE AT YOUR OWN RISK!" +"\r\n") # Comment this out for release versions.
+        s.sendall("PRIVMSG %s :"%(CHANNEL if words[2] == CHANNEL else name) +" " +"\r\n")
+        s.sendall("PRIVMSG %s :"%(CHANNEL if words[2] == CHANNEL else name) +"Commands:" +"\r\n")
+        s.sendall("PRIVMSG %s :"%(CHANNEL if words[2] == CHANNEL else name) +" " +"\r\n")
+        s.sendall("PRIVMSG %s :"%(CHANNEL if words[2] == CHANNEL else name) +"`@tell recipient message` delivers `message` to `recipient` when they are next \"seen\" saying something. If they are \"seen\" next in a private message to ripoffbot, `message` will be delivered in a reply to that message, and ripoffbot will send a notification message to the sender in the from that the sender sent the original `@tell` command (either in the public channel or via a private message)." +"\r\n")
+        s.sendall("PRIVMSG %s :"%(CHANNEL if words[2] == CHANNEL else name) +"`@privtell recipient message` delivers `message` to `recipient` via a private message when they are next \"seen\" saying something. Wherever they are seen, `message` will still be sent to them privately. Upon delivery, ripoffbot will privately send a notification message to the sender." +"\r\n")
+        s.sendall("PRIVMSG %s :"%(CHANNEL if words[2] == CHANNEL else name) +"`@help` displays a message similar to this guide, but tailored to IRC users." +"\r\n")
+        s.sendall("PRIVMSG %s :"%(CHANNEL if words[2] == CHANNEL else name) +" " +"\r\n")
+        s.sendall("PRIVMSG %s :"%(CHANNEL if words[2] == CHANNEL else name) +"Ripoffbot source code: https://github.com/zippynk/ripoffbot (available under the Mozilla Public License)" +"\r\n")
+        s.sendall("PRIVMSG %s :"%(CHANNEL if words[2] == CHANNEL else name) +" " +"\r\n")
+        s.sendall("PRIVMSG %s :"%(CHANNEL if words[2] == CHANNEL else name) +"Jokebot source code: https://github.com/hardmath123/jokebot (available under the Unlicense)" +"\r\n")
     
 read_loop(got_message)
