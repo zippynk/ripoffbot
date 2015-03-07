@@ -3,7 +3,7 @@
 #  To run ripoffbot, type "python ripoffbot.py <host> <channel (no #)> [--ssl|--plain] <nick>"
 
 #  A fork of jokebot, by Hardmath123. https://github.com/hardmath123/jokebot
-#  Modified to be a mailbot ripoff by zippynk. https://github.com/zippynk/ripoffbot
+#  Modified to be a mailbot ripoff by Nathan Krantz-Fire (a.k.a zippynk). https://github.com/zippynk/ripoffbot
 
 #  This Source Code Form is subject to the terms of the Mozilla Public
 #  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -21,10 +21,28 @@ import time
 import os
 import pickle
 
-if os.path.isfile(os.path.expanduser("~") +'/ripoffbot_messages.p'):
-    messages = pickle.load(open(os.path.expanduser("~") +'ripoffbot_messages.p','rb'))
+# Begin dev edition code. Comment this stuff out in release versions.
+
+print "WARNING! This is a development version of ripoffbot. Proceeding may corrupt ripoffbot database files, crash, and/or have other consequences. Proceed at your own risk."
+if not raw_input("Are you sure you want to proceed? (y/n) ").lower() in ["yes","y","true","continue","yea","yeah","yup","sure"]:
+    print "Aborting."
+    exit(0)
+
+# End Dev Edition Code.
+
+thisVersion = [0,1,1] # The version of ripoffbot, as a list of numbers (eg [0,1,0] means "v0.1.0")
+
+if os.path.isfile(os.path.expanduser("~") +'/.ripoffbot_database.p'):
+    dbLoad = pickle.load(open(os.path.expanduser("~") +'/.ripoffbot_database.p','rb'))
+    if dbLoad['version'] == [0,1,1]:
+        messages = dbLoad['messages']
+    else:
+        print "This database was created with an old or unknown version of ripoffbot. Please use the newest version (or correct fork) and try again. If this is not possible, move or delete the file '~/.ripoffbot_database.p and re-run ripoffbot. A new database will be created automatically."
+        exit(0)
 else:
     messages = []
+def saveDb():
+    pickle.dump({'messages':messages,'version':[0,1,1]}, open(os.path.expanduser("~") +'/.ripoffbot_database.p','wb'))
 
 if len(sys.argv) != 5:
     print "Usage: python ripoffbot.py <host> <channel (no #)> [--ssl|--plain] <nick>"
@@ -84,10 +102,15 @@ def got_message(message):
             else:
                 if writing == True:
                     name = name +i
+        messagesToPop = []
         for i in range(len(messages)):
             if messages[i][1] == name:
                 s.sendall("PRIVMSG %s :"%(CHANNEL) +name +": " +'some time' +' ago, ' +messages[i][0] +' said ' +messages[i][2] + "\r\n")
+                messagesToPop.append(i)
+        if len(messagesToPop) > 0:
+            for i in sorted(messagesToPop, reverse=True):
                 messages.pop(i)
+            saveDb()
     if words[1] == '001' and not connected:
         # As per section 5.1 of the RFC, 001 is the numeric response for
         # a successful connection/welcome message.
@@ -100,6 +123,7 @@ def got_message(message):
             s.sendall("PRIVMSG %s :"%(CHANNEL) +name +": I'm right here!" + "\r\n")
         else:
             messages.append([name,words[4],' '.join(words[5:len(words)])])
+            saveDb()
             s.sendall("PRIVMSG %s :"%(CHANNEL) +name +": I'll let them know!" + "\r\n")
     
 read_loop(got_message)
