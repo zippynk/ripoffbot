@@ -1,0 +1,17 @@
+Rounding:
+Years [WORKS]
+Months [WORKS]
+Weeks (rounding not needed)
+Days [WORKS]
+Hours [WORKS]
+Minutes (rounding not needed)
+Seconds (rounding not needed)
+
+Other counting:
+Years [WORKS, except for the 1396 bug, which, given the nature of mailbot, shouldn't be a problem]
+Months [WORKS]
+Weeks [WORKS]
+Days [WORKS]
+Hours [WORKS]
+Minutes [WORKS]
+Seconds [WORKS]

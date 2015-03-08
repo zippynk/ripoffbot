@@ -27,7 +27,7 @@ def usefulComparison(a,b):
     elif delta.days >= 7:
         if int(round(float(delta.days)/7.0)) == 1:
             deltastring = "A week ago"
-        elif int(round(float(delta.days)/7.0)) == 30:
+        elif int(round(float(delta.days)/7.0)) == 4:
             deltastring = "A month ago"
         else:
             deltastring = str(int(round(float(delta.days)/7.0))) +" weeks ago"
