@@ -6,8 +6,6 @@ To run ripoffbot, type `python ripoffbot.py <host> <channel (no #)> [--ssl|--pla
 
 The `--classic` flag makes ripoffbot run in a simpler mode, more like said mailbot.
 
-WARNING: THIS IS A DEVELOPMENT VERSION! USE AT YOUR OWN RISK!
-
 # Commands (run from IRC):
 
 `@tell recipient message` delivers `message` to `recipient` when they are next "seen" saying something. If they are "seen" next in a private message to ripoffbot, `message` will be delivered in a reply to that message, and ripoffbot will send a notification message to the sender in the from that the sender sent the original `@tell` command (either in the public channel or via a private message).
