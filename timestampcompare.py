@@ -65,13 +65,14 @@ def usefulComparison(a,b):
     else:
         deltastring = "Moments ago"
     return deltastring
-a = input("Year: ")
-b = input("Month: ")
-c = input("Day: ")
-d = input("Hour: ")
-e = input("Minute: ")
-f = input("Second: ")
-print str(datetime(a,b,c,d,e,f))
-now = (datetime.now())
-print str(now)
-print usefulComparison(now,datetime(a,b,c,d,e,f))
+# The rest of this is useful for testing, but should be commented out when actually using the library.
+#a = input("Year: ")
+#b = input("Month: ")
+#c = input("Day: ")
+#d = input("Hour: ")
+#e = input("Minute: ")
+#f = input("Second: ")
+#print str(datetime(a,b,c,d,e,f))
+#now = (datetime.now())
+#print str(now)
+#print usefulComparison(now,datetime(a,b,c,d,e,f))
