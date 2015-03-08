@@ -49,7 +49,7 @@ if os.path.isfile(os.path.expanduser("~") +'/.ripoffbot_database.p'):
 else:
     messages = []
 def saveDb():
-    pickle.dump({'messages':messages,'version':[0,1,1]}, open(os.path.expanduser("~") +'/.ripoffbot_database.p','wb'))
+    pickle.dump({'messages':messages,'version':[0,2,0]}, open(os.path.expanduser("~") +'/.ripoffbot_database.p','wb'))
 
 HOST = sys.argv[1]
 CHANNEL = "#"+sys.argv[2]
@@ -65,8 +65,6 @@ if len(sys.argv) >= 6:
         CLASSICMODE = False
 else:
     CLASSICMODE = False
-    
-print CLASSICMODE
 
 plain = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s = ssl.wrap_socket(plain) if SSL else plain
