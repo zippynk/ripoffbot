@@ -26,7 +26,7 @@ from datetime import datetime
 import timestampcompare
 import json
 
-thisVersion = [0,3,0,"d"] # The version of ripoffbot, as a list of numbers (eg [0,1,0] means "v0.1.0")
+thisVersion = [0,3,0,"d"] # The version of ripoffbot, as a list of numbers (eg [0,1,0] means "v0.1.0"). A "d" at the end means that the current version is a development version and very well may break at some point.
 
 if (len(sys.argv) < 5 or len(sys.argv) > 6) and not "--readconfig" in sys.argv:
     print """Usage: python ripoffbot.py <host> <channel (no #)> [--ssl|--plain] <nick> [--classic] [--readconfig]
@@ -110,7 +110,7 @@ def read_loop(callback):
     while True:
         time.sleep(0.2)
         try:
-            readables, writables, exceptionals = select.select([s], [s], [s]) 
+            readables, writables, exceptionals = select.select([s], [s], [s])
             if len(readables) == 1:
                 data += s.recv(512);
                 while CRLF in data:
@@ -215,5 +215,5 @@ def got_message(message):
             for i in sorted(messagesToPop, reverse=True):
                 messages.pop(i)
             saveDb()
-    
+
 read_loop(got_message)
