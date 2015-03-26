@@ -1,10 +1,11 @@
 # Ripoffbot
 
-Ripoffbot is an IRC mailbot. It is based off and is of jokebot by Hardmath123, and was modified into  a ripoff of a certain IRC mailbot by Nathan Krantz-Fire (a.k.a zippynk). However, since then, it has gained several new features that said mailbot does not include.
+Ripoffbot is an IRC mailbot. It is based off and is of jokebot by Hardmath123, and was modified into  a ripoff of Aaron Weiss's mailbot by Nathan Krantz-Fire (a.k.a zippynk). However, since then, it has gained several new features that said mailbot does not include.
 
 To run ripoffbot, type `python ripoffbot.py <host> <channel (no #)> [--ssl|--plain] <nick> [--classic]` into a terminal, replacing the placeholders with your configuration.
 
-The `--classic` flag makes ripoffbot run in a simpler mode, more like said mailbot.
+The `--classic` flag enables a mode intended to mirror the original mailbot as much as possible.
+The `--readconfig` flag reads all other data (with the exception of the `--classic` flag from the file titled `config.json` in the same directory as ripoffbot. This installation should contain an example `config.json` file.
 
 # Commands (run from IRC):
 
@@ -31,3 +32,5 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 Ripoffbot source code: https://github.com/zippynk/ripoffbot
 
 Jokebot source code: https://github.com/hardmath123/jokebot
+
+Original Mailbot source code: https://github.com/aatxe/mailbot

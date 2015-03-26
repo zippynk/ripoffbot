@@ -1,11 +1,13 @@
 #!/usr/bin/env python
 
-#  To run ripoffbot, type `python ripoffbot.py <host> <channel (no #)> [--ssl|--plain] <nick> [--classic]` into a terminal, replacing the placeholders with your configuration.
+#  To run ripoffbot, type `python ripoffbot.py <host> <channel (no #)> [--ssl|--plain] <nick> [--classic] [--readconfig]` into a terminal, replacing the placeholders with your configuration.
 
-#  The `--classic` flag makes ripoffbot run in a simpler mode, more like the mailbot that inspired it.
+# The `--classic` flag enables a mode intended to mirror the original mailbot as much as possible.
+# The `--readconfig` flag reads all other data (with the exception of the `--classic` flag from the file titled `config.json` in the same directory as ripoffbot. This installation should contain an example `config.json` file.
 
-#  Based on jokebot by Hardmath123. https://github.com/hardmath123/jokebot
+#  Based on Hardmath123's jokebot. https://github.com/hardmath123/jokebot
 #  Modified to be a mailbot ripoff by Nathan Krantz-Fire (a.k.a zippynk). https://github.com/zippynk/ripoffbot
+#  Ripped off from Aaron Weiss's mailbot (meaning that although no code was directly re-used, it behaves as similar to Aaron's mailbot as possible on the outside). https://github.com/aatxe/mailbot
 
 #  This Source Code Form is subject to the terms of the Mozilla Public
 #  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -22,20 +24,22 @@ import os
 import pickle
 from datetime import datetime
 import timestampcompare
+import json
 
+thisVersion = [0,3,0,"d"] # The version of ripoffbot, as a list of numbers (eg [0,1,0] means "v0.1.0")
 
-thisVersion = [0,2,0] # The version of ripoffbot, as a list of numbers (eg [0,1,0] means "v0.1.0")
-
-if len(sys.argv) != 5 and len(sys.argv) != 6:
-    print "Usage: python ripoffbot.py <host> <channel (no #)> [--ssl|--plain] <nick> [--classic]"
+if (len(sys.argv) < 5 or len(sys.argv) > 6) and not "--readconfig" in sys.argv:
+    print """Usage: python ripoffbot.py <host> <channel (no #)> [--ssl|--plain] <nick> [--classic] [--readconfig]
+The `--classic` flag enables a mode intended to mirror the original mailbot as much as possible.
+The `--readconfig` flag reads all other data (with the exception of the `--classic` flag from the file titled `config.json` in the same directory as ripoffbot. This installation should contain an example `config.json` file."""
     exit(0)
 
 # Begin dev edition code. Comment this stuff out in release versions.
 
-#print "WARNING! This is a development version of ripoffbot. Proceeding may corrupt ripoffbot database files, crash, and/or have other consequences. Proceed at your own risk."
-#if not raw_input("Are you sure you want to proceed? (y/n) ").lower() in ["yes","y","true","continue","yea","yeah","yup","sure"]:
-#    print "Aborting."
-#    exit(0)
+print "WARNING! This is a development version of ripoffbot. Proceeding may corrupt ripoffbot database files, crash, and/or have other consequences. Proceed at your own risk."
+if not raw_input("Are you sure you want to proceed? (y/n) ").lower() in ["yes","y","true","continue","yea","yeah","yup","sure"]:
+    print "Aborting."
+    exit(0)
 
 # End Dev Edition Code.
 
@@ -43,26 +47,54 @@ if os.path.isfile(os.path.expanduser("~") +'/.ripoffbot_database.p'):
     dbLoad = pickle.load(open(os.path.expanduser("~") +'/.ripoffbot_database.p','rb'))
     if dbLoad['version'] == [0,2,0]:
         messages = dbLoad['messages']
+    if dbLoad['version'] == [0,3,0,"d"]:
+        messages = dbLoad['messages']
     else:
         print "This database was created with an old or unknown version of ripoffbot. Please use the newest version (or correct fork) and try again. If this is not possible, move or delete the file '~/.ripoffbot_database.p' and re-run ripoffbot. A new database will be created automatically."
         exit(0)
 else:
     messages = []
 def saveDb():
-    pickle.dump({'messages':messages,'version':[0,2,0]}, open(os.path.expanduser("~") +'/.ripoffbot_database.p','wb'))
+    pickle.dump({'messages':messages,'version':thisVersion}, open(os.path.expanduser("~") +'/.ripoffbot_database.p','wb'))
 
-HOST = sys.argv[1]
-CHANNEL = "#"+sys.argv[2]
-SSL = sys.argv[3].lower() == '--ssl'
-PORT = 6697 if SSL else 6667
-
-NICK = sys.argv[4]
-
-if len(sys.argv) >= 6:
-    if sys.argv[5].lower() == '--classic':
-        CLASSICMODE = True
+if "--readconfig" in sys.argv:
+    if os.path.isfile(os.path.dirname(__file__) +"/config.json"):
+        try:
+            config = json.loads(open(os.path.dirname(__file__) +"/config.json",'r').read())
+        except:
+            print "Failed to decode configuration file."
+            exit(0)
+        try:
+            HOST = str(config["server"])
+            if len(config["channels"]) > 1:
+                print "Ripoffbot only supports joining one channel at a time. Exiting."
+                exit(0)
+            else:
+                CHANNEL = str(config["channels"][0])
+            SSL = config["use_ssl"]
+            NICK = config["nickname"]
+        except KeyError:
+            print "Failed to decode configuration file."
+            exit(0)
+        if "nick-password" in config.keys():
+            PASSWORD = config["nick-password"]
+        else:
+            PASSWORD = False
     else:
-        CLASSICMODE = False
+        print "Failed to decode configuration file."
+        exit(0)
+
+else:
+    HOST = sys.argv[1]
+    CHANNEL = "#"+sys.argv[2]
+    SSL = sys.argv[3].lower() == '--ssl'
+    PORT = 6697 if SSL else 6667
+
+    NICK = sys.argv[4]
+    PASSWORD = False
+
+if "--classic" in sys.argv:
+    CLASSICMODE = True
 else:
     CLASSICMODE = False
 
@@ -93,7 +125,7 @@ def read_loop(callback):
 
 print "Registering..."
 
-s.sendall("NICK %s\r\n"%(NICK))
+s.sendall("NICK %s\r\n"%("tempnick" +str(random.randint(10000001,99999999))))
 s.sendall("USER %s * * :A mail bot\r\n"%(NICK))
 
 
@@ -117,6 +149,10 @@ def got_message(message):
         # As per section 5.1 of the RFC, 001 is the numeric response for
         # a successful connection/welcome message.
         connected = True
+        if not PASSWORD == False:
+            s.sendall("PRIVMSG NickServ :" +"ghost " +NICK +" " +PASSWORD +"\r\n")
+            s.sendall("PRIVMSG NickServ :" +"identify " +NICK +" " +PASSWORD +"\r\n")
+        s.sendall("NICK %s\r\n"%(NICK))
         s.sendall("JOIN %s\r\n"%(CHANNEL))
         print "Joining..."
     elif words[1] == 'PRIVMSG' and (words[2] == CHANNEL or words[2] == NICK) and ('@tell' in words[3] or ('@privtell' in words[3] and not CLASSICMODE)) and connected and len(words) >= 5:
