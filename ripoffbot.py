@@ -26,6 +26,10 @@ from datetime import datetime
 import timestampcompare
 import json
 
+if "/" in __file__:
+    configLocation = os.path.dirname(__file__) +"/config.json"
+else:
+    configLocation = "config.json"
 thisVersion = [0,3,0,"d"] # The version of ripoffbot, as a list of numbers (eg [0,1,0] means "v0.1.0"). A "d" at the end means that the current version is a development version and very well may break at some point.
 
 if (len(sys.argv) < 5 or len(sys.argv) > 6) and not "--readconfig" in sys.argv:
@@ -34,12 +38,12 @@ The `--classic` flag enables a mode intended to mirror the original mailbot as m
 The `--readconfig` flag reads all other data (with the exception of the `--classic` flag from the file titled `config.json` in the same directory as ripoffbot. This installation should contain an example `config.json` file."""
     exit(0)
 
-# Begin dev edition code. Comment this stuff out in release versions.
-
-print "WARNING! This is a development version of ripoffbot. Proceeding may corrupt ripoffbot database files, crash, and/or have other consequences. Proceed at your own risk."
-if not raw_input("Are you sure you want to proceed? (y/n) ").lower() in ["yes","y","true","continue","yea","yeah","yup","sure"]:
-    print "Aborting."
-    exit(0)
+# Begin dev edition code.
+if "d" in thisVersion:
+    print "WARNING! This is a development version of ripoffbot. Proceeding may corrupt ripoffbot database files, crash, and/or have other consequences. Proceed at your own risk."
+    if not raw_input("Are you sure you want to proceed? (y/n) ").lower() in ["yes","y","true","continue","yea","yeah","yup","sure"]:
+        print "Aborting."
+        exit(0)
 
 # End Dev Edition Code.
 
@@ -58,11 +62,13 @@ def saveDb():
     pickle.dump({'messages':messages,'version':thisVersion}, open(os.path.expanduser("~") +'/.ripoffbot_database.p','wb'))
 
 if "--readconfig" in sys.argv:
-    if os.path.isfile(os.path.dirname(__file__) +"/config.json"):
+    if os.path.isfile(configLocation):
         try:
-            config = json.loads(open(os.path.dirname(__file__) +"/config.json",'r').read())
-        except:
+            config = json.loads(open(configLocation,'r').read())
+        except e:
             print "Failed to decode configuration file."
+            if "d" in thisVersion:
+                print e
             exit(0)
         try:
             HOST = str(config["server"])
@@ -73,15 +79,20 @@ if "--readconfig" in sys.argv:
                 CHANNEL = str(config["channels"][0])
             SSL = config["use_ssl"]
             NICK = config["nickname"]
-        except KeyError:
+        except KeyError, e:
             print "Failed to decode configuration file."
+            if "d" in thisVersion:
+                print e
             exit(0)
         if "nick-password" in config.keys():
             PASSWORD = config["nick-password"]
         else:
             PASSWORD = False
+        PORT = 6697 if SSL else 6667
     else:
         print "Failed to decode configuration file."
+        if "d" in thisVersion:
+            print "File " +configLocation +" does not exist."
         exit(0)
 
 else:
