@@ -3,7 +3,8 @@
 #  To run ripoffbot, type `python ripoffbot.py <host> <channel (no #)> [--ssl|--plain] <nick> [--classic] [--readconfig]` into a terminal, replacing the placeholders with your configuration.
 
 # The `--classic` flag enables a mode intended to mirror the original mailbot as much as possible.
-# The `--readconfig` flag reads all other data (with the exception of the `--classic` flag from the file titled `config.json` in the same directory as ripoffbot. This installation should contain an example `config.json` file.
+# The `--readconfig` flag reads all other data (with the exception of the `--classic` flag from the file titled `config.json` in the same directory as ripoffbot. This installation should contain an example configuration file, titled `config_example.json`.
+# The `--password` flag prompts the user for a password when starting ripoffbot. Note that you may not be able to see the password as you type it, and that this can interfere with running ripoffbot in a location where you cannot actively input text.
 
 #  Based on Hardmath123's jokebot. https://github.com/hardmath123/jokebot
 #  Modified to be a mailbot ripoff by Nathan Krantz-Fire (a.k.a zippynk). https://github.com/zippynk/ripoffbot
@@ -33,9 +34,10 @@ else:
 thisVersion = [0,3,0,"d"] # The version of ripoffbot, as a list of numbers (eg [0,1,0] means "v0.1.0"). A "d" at the end means that the current version is a development version and very well may break at some point.
 
 if (len(sys.argv) < 5 or len(sys.argv) > 6) and not "--readconfig" in sys.argv:
-    print """Usage: python ripoffbot.py <host> <channel (no #)> [--ssl|--plain] <nick> [--classic] [--readconfig]
+    print """Usage: python ripoffbot.py <host> <channel (no #)> [--ssl|--plain] <nick> [--classic] [--readconfig] [--password]
 The `--classic` flag enables a mode intended to mirror the original mailbot as much as possible.
-The `--readconfig` flag reads all other data (with the exception of the `--classic` flag from the file titled `config.json` in the same directory as ripoffbot. This installation should contain an example `config.json` file."""
+The `--readconfig` flag reads all other data (with the exception of the `--classic` flag from the file titled `config.json` in the same directory as ripoffbot. This installation should contain an example configuration file, titled `config_example.json`.
+The `--password` flag prompts the user for a password when starting ripoffbot. Note that you may not be able to see the password as you type it, and that this can interfere with running ripoffbot in a location where you cannot actively input text."""
     exit(0)
 
 # Begin dev edition code.
@@ -102,7 +104,11 @@ else:
     PORT = 6697 if SSL else 6667
 
     NICK = sys.argv[4]
-    PASSWORD = False
+    
+    if "--password" in sys.argv:
+        PASSWORD = raw_input("Password? ")
+    else:
+        PASSWORD = False
 
 if "--classic" in sys.argv:
     CLASSICMODE = True
