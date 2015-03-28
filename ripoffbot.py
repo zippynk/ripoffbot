@@ -4,7 +4,7 @@
 
 # The `--classic` flag enables a mode intended to mirror the original mailbot as much as possible.
 # The `--readconfig` flag reads all other data (with the exception of the `--classic` flag from the file titled `config.json` in the same directory as ripoffbot. This installation should contain an example configuration file, titled `config_example.json`.
-# The `--password` flag prompts the user for a password when starting ripoffbot. Note that you may not be able to see the password as you type it, and that this can interfere with running ripoffbot in a location where you cannot actively input text.
+# The `--password` flag prompts the user for a password when starting ripoffbot. Note that you may not be able to see the password as you type it, and that this can interfere with running ripoffbot in a location where you cannot actively input text. Does not run with `--readconfig`, as it does not apply there; the `config.json` file has an option for a password.
 
 #  Based on Hardmath123's jokebot. https://github.com/hardmath123/jokebot
 #  Modified to be a mailbot ripoff by Nathan Krantz-Fire (a.k.a zippynk). https://github.com/zippynk/ripoffbot
@@ -36,9 +36,10 @@ thisVersion = [0,3,0,"d"] # The version of ripoffbot, as a list of numbers (eg [
 
 if (len(sys.argv) < 5 or len(sys.argv) > 7) and not "--readconfig" in sys.argv:
     print """Usage: python ripoffbot.py <host> <channel (no #)> [--ssl|--plain] <nick> [--classic] [--readconfig] [--password]
+
 The `--classic` flag enables a mode intended to mirror the original mailbot as much as possible.
 The `--readconfig` flag reads all other data (with the exception of the `--classic` flag from the file titled `config.json` in the same directory as ripoffbot. This installation should contain an example configuration file, titled `config_example.json`.
-The `--password` flag prompts the user for a password when starting ripoffbot. Note that you may not be able to see the password as you type it, and that this can interfere with running ripoffbot in a location where you cannot actively input text."""
+The `--password` flag prompts the user for a password when starting ripoffbot. Note that you may not be able to see the password as you type it, and that this can interfere with running ripoffbot in a location where you cannot actively input text. Does not run with `--readconfig`, as it does not apply there; the `config.json` file has an option for a password."""
     exit(0)
 
 # Begin dev edition code.
@@ -186,7 +187,6 @@ def got_message(message):
                 s.sendall("PRIVMSG %s :"%(CHANNEL if words[2] == CHANNEL else name) +name +": I'll let them know!" + "\r\n")
     elif words[1] == 'PRIVMSG' and (words[2] == CHANNEL or words[2] == NICK) and '@help' in words[3] and connected and not CLASSICMODE:
         s.sendall("PRIVMSG %s :"%(CHANNEL if words[2] == CHANNEL else name) +"This mailbot uses the ripoffbot software, which is created by Nathan Krantz-Fire (a.k.a zippynk), and based on Jokebot by Hardmath123." +"\r\n")
-        s.sendall("PRIVMSG %s :"%(CHANNEL if words[2] == CHANNEL else name) +" " +"\r\n")
         if "d" in thisVersion:
             print "DEVELOPMENT NOTICE SENT"
             s.sendall("PRIVMSG %s :"%(CHANNEL if words[2] == CHANNEL else name) +"WARNING: THIS IS A DEVELOPMENT VERSION! USE AT YOUR OWN RISK!" +"\r\n")
@@ -198,8 +198,8 @@ def got_message(message):
         s.sendall("PRIVMSG %s :"%(CHANNEL if words[2] == CHANNEL else name) +"`@help` displays a message similar to this guide, but tailored to IRC users." +"\r\n")
         s.sendall("PRIVMSG %s :"%(CHANNEL if words[2] == CHANNEL else name) +" " +"\r\n")
         s.sendall("PRIVMSG %s :"%(CHANNEL if words[2] == CHANNEL else name) +"Ripoffbot source code: https://github.com/zippynk/ripoffbot (available under the Mozilla Public License 2.0)" +"\r\n")
-        s.sendall("PRIVMSG %s :"%(CHANNEL if words[2] == CHANNEL else name) +" " +"\r\n")
         s.sendall("PRIVMSG %s :"%(CHANNEL if words[2] == CHANNEL else name) +"Jokebot source code: https://github.com/hardmath123/jokebot (available under the Unlicense)" +"\r\n")
+        s.sendall("PRIVMSG %s :"%(CHANNEL if words[2] == CHANNEL else name) +"Original Mailbot source code: hhttps://github.com/aatxe/mailbot (not licensed at all, but that doesn't matter, since ripoffbot takes no direct code from this mailbot)" +"\r\n")
     if CLASSICMODE:
         messagesToPop = []
         for i in range(len(messages)):
