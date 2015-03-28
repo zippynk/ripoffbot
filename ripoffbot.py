@@ -171,6 +171,8 @@ def got_message(message):
         if not PASSWORD == False:
             s.sendall("PRIVMSG NickServ :" +"ghost " +NICK +" " +PASSWORD +"\r\n")
             s.sendall("PRIVMSG NickServ :" +"identify " +NICK +" " +PASSWORD +"\r\n")
+            print "Waiting for NickServ (this will take 10 seconds, and is necessary to make sure other instances are ghosted appropriately)..."
+            time.sleep(10)
         s.sendall("NICK %s\r\n"%(NICK))
         s.sendall("JOIN %s\r\n"%(CHANNEL))
         print "Joining..."
@@ -186,9 +188,8 @@ def got_message(message):
                 saveDb()
                 s.sendall("PRIVMSG %s :"%(CHANNEL if words[2] == CHANNEL else name) +name +": I'll let them know!" + "\r\n")
     elif words[1] == 'PRIVMSG' and (words[2] == CHANNEL or words[2] == NICK) and '@help' in words[3] and connected and not CLASSICMODE:
-        s.sendall("PRIVMSG %s :"%(CHANNEL if words[2] == CHANNEL else name) +"This mailbot uses the ripoffbot software, which is created by Nathan Krantz-Fire (a.k.a zippynk), and based on Jokebot by Hardmath123." +"\r\n")
+        s.sendall("PRIVMSG %s :"%(CHANNEL if words[2] == CHANNEL else name) +"This mailbot uses the ripoffbot software, which is created by Nathan Krantz-Fire (a.k.a zippynk), based on Jokebot by Hardmath123, and loosely ripped off from Aatxe's mailbot." +"\r\n")
         if "d" in thisVersion:
-            print "DEVELOPMENT NOTICE SENT"
             s.sendall("PRIVMSG %s :"%(CHANNEL if words[2] == CHANNEL else name) +"WARNING: THIS IS A DEVELOPMENT VERSION! USE AT YOUR OWN RISK!" +"\r\n")
         s.sendall("PRIVMSG %s :"%(CHANNEL if words[2] == CHANNEL else name) +" " +"\r\n")
         s.sendall("PRIVMSG %s :"%(CHANNEL if words[2] == CHANNEL else name) +"Commands:" +"\r\n")
