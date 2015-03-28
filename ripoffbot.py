@@ -33,7 +33,7 @@ else:
     configLocation = "config.json"
 thisVersion = [0,3,0,"d"] # The version of ripoffbot, as a list of numbers (eg [0,1,0] means "v0.1.0"). A "d" at the end means that the current version is a development version and very well may break at some point.
 
-if (len(sys.argv) < 5 or len(sys.argv) > 6) and not "--readconfig" in sys.argv:
+if (len(sys.argv) < 5 or len(sys.argv) > 7) and not "--readconfig" in sys.argv:
     print """Usage: python ripoffbot.py <host> <channel (no #)> [--ssl|--plain] <nick> [--classic] [--readconfig] [--password]
 The `--classic` flag enables a mode intended to mirror the original mailbot as much as possible.
 The `--readconfig` flag reads all other data (with the exception of the `--classic` flag from the file titled `config.json` in the same directory as ripoffbot. This installation should contain an example configuration file, titled `config_example.json`.
