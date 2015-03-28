@@ -33,7 +33,7 @@ if "/" in __file__:
     configLocation = os.path.dirname(__file__) +"/config.json"
 else:
     configLocation = "config.json"
-thisVersion = [0,3,0,"d"] # The version of ripoffbot, as a list of numbers (eg [0,1,0] means "v0.1.0"). A "d" at the end means that the current version is a development version and very well may break at some point.
+thisVersion = [0,3,0] # The version of ripoffbot, as a list of numbers (eg [0,1,0] means "v0.1.0"). A "d" at the end means that the current version is a development version and very well may break at some point.
 
 if (len(sys.argv) < 5 or len(sys.argv) > 8) and not "--readconfig" in sys.argv:
     print """Usage: python ripoffbot.py <host> <channel (no #)> [--ssl|--plain] <nick> [--classic] [--readconfig] [--password] [--nodb]
@@ -196,7 +196,7 @@ def got_message(message):
                 saveDb()
                 s.sendall("PRIVMSG %s :"%(CHANNEL if words[2] == CHANNEL else name) +name +": I'll let them know!" + "\r\n")
     elif words[1] == 'PRIVMSG' and (words[2] == CHANNEL or words[2] == NICK) and '@help' in words[3] and connected and not CLASSICMODE:
-        s.sendall("PRIVMSG %s :"%(CHANNEL if words[2] == CHANNEL else name) +"This mailbot uses the ripoffbot software, which is created by Nathan Krantz-Fire (a.k.a zippynk), based on Jokebot by Hardmath123, and loosely ripped off from Aatxe's mailbot." +"\r\n")
+        s.sendall("PRIVMSG %s :"%(CHANNEL if words[2] == CHANNEL else name) +"This mailbot uses the ripoffbot software, which is created by Nathan Krantz-Fire (a.k.a zippynk), based on Jokebot by Hardmath123, and loosely ripped off from Aaron Weiss's mailbot." +"\r\n")
         if "d" in thisVersion:
             s.sendall("PRIVMSG %s :"%(CHANNEL if words[2] == CHANNEL else name) +"WARNING: THIS IS A DEVELOPMENT VERSION! USE AT YOUR OWN RISK!" +"\r\n")
         s.sendall("PRIVMSG %s :"%(CHANNEL if words[2] == CHANNEL else name) +" " +"\r\n")
