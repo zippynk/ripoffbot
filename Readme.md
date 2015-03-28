@@ -7,7 +7,10 @@ WARNING: THIS IS A DEVELOPMENT VERSION OF RIPOFFBOT! USE AT YOUR OWN RISK!
 To run ripoffbot, type `python ripoffbot.py <host> <channel (no #)> [--ssl|--plain] <nick> [--classic]` into a terminal, replacing the placeholders with your configuration.
 
 The `--classic` flag enables a mode intended to mirror the original mailbot as much as possible.
-The `--readconfig` flag reads all other data (with the exception of the `--classic` flag from the file titled `config.json` in the same directory as ripoffbot. This installation should contain an example `config.json` file.
+
+The `--readconfig` flag reads all other data (with the exception of the `--classic` flag from the file titled `config.json` in the same directory as ripoffbot. This installation should contain an example configuration file, titled `config_example.json`.
+
+The `--password` flag prompts the user for a password when starting ripoffbot. Note that you may not be able to see the password as you type it, and that this can interfere with running ripoffbot in a location where you cannot actively input text.
 
 # Commands (run from IRC):
 
