@@ -1,10 +1,11 @@
 #!/usr/bin/env python
 
-#  To run ripoffbot, type `python ripoffbot.py <host> <channel (no #)> [--ssl|--plain] <nick> [--classic] [--readconfig]` into a terminal, replacing the placeholders with your configuration.
+#  To run ripoffbot, type `python ripoffbot.py <host> <channel (no #)> [--ssl|--plain] <nick> [--classic] [--readconfig] [--nodb]` into a terminal, replacing the placeholders with your configuration.
 
 # The `--classic` flag enables a mode intended to mirror the original mailbot as much as possible.
-# The `--readconfig` flag reads all other data (with the exception of the `--classic` flag from the file titled `config.json` in the same directory as ripoffbot. This installation should contain an example configuration file, titled `config_example.json`.
+# The `--readconfig` flag reads all other data (with the exception of the `--classic` and `--nodb` flags) from the file titled `config.json` in the same directory as ripoffbot. This installation should contain an example configuration file, titled `config_example.json`.
 # The `--password` flag prompts the user for a password when starting ripoffbot. Note that you may not be able to see the password as you type it, and that this can interfere with running ripoffbot in a location where you cannot actively input text. Does not run with `--readconfig`, as it does not apply there; the `config.json` file has an option for a password.
+# The `--nodb` flag disables saving messages between sessions.
 
 #  Based on Hardmath123's jokebot. https://github.com/hardmath123/jokebot
 #  Modified to be a mailbot ripoff by Nathan Krantz-Fire (a.k.a zippynk). https://github.com/zippynk/ripoffbot
@@ -34,12 +35,13 @@ else:
     configLocation = "config.json"
 thisVersion = [0,3,0,"d"] # The version of ripoffbot, as a list of numbers (eg [0,1,0] means "v0.1.0"). A "d" at the end means that the current version is a development version and very well may break at some point.
 
-if (len(sys.argv) < 5 or len(sys.argv) > 7) and not "--readconfig" in sys.argv:
-    print """Usage: python ripoffbot.py <host> <channel (no #)> [--ssl|--plain] <nick> [--classic] [--readconfig] [--password]
+if (len(sys.argv) < 5 or len(sys.argv) > 8) and not "--readconfig" in sys.argv:
+    print """Usage: python ripoffbot.py <host> <channel (no #)> [--ssl|--plain] <nick> [--classic] [--readconfig] [--password] [--nodb]
 
 The `--classic` flag enables a mode intended to mirror the original mailbot as much as possible.
-The `--readconfig` flag reads all other data (with the exception of the `--classic` flag from the file titled `config.json` in the same directory as ripoffbot. This installation should contain an example configuration file, titled `config_example.json`.
-The `--password` flag prompts the user for a password when starting ripoffbot. Note that you may not be able to see the password as you type it, and that this can interfere with running ripoffbot in a location where you cannot actively input text. Does not run with `--readconfig`, as it does not apply there; the `config.json` file has an option for a password."""
+The `--readconfig` flag reads all other data (with the exception of the `--classic` and `--nodb` flags) from the file titled `config.json` in the same directory as ripoffbot. This installation should contain an example configuration file, titled `config_example.json`.
+The `--password` flag prompts the user for a password when starting ripoffbot. Note that you may not be able to see the password as you type it, and that this can interfere with running ripoffbot in a location where you cannot actively input text. Does not run with `--readconfig`, as it does not apply there; the `config.json` file has an option for a password.
+The `--nodb` flag disables saving messages between sessions."""
     exit(0)
 
 # Begin dev edition code.
@@ -50,20 +52,6 @@ if "d" in thisVersion:
         exit(0)
 
 # End Dev Edition Code.
-
-if os.path.isfile(os.path.expanduser("~") +'/.ripoffbot_database.p'):
-    dbLoad = pickle.load(open(os.path.expanduser("~") +'/.ripoffbot_database.p','rb'))
-    if dbLoad['version'] == [0,2,0]:
-        messages = dbLoad['messages']
-    if dbLoad['version'] == [0,3,0,"d"]:
-        messages = dbLoad['messages']
-    else:
-        print "This database was created with an old or unknown version of ripoffbot. Please use the newest version (or correct fork) and try again. If this is not possible, move or delete the file '~/.ripoffbot_database.p' and re-run ripoffbot. A new database will be created automatically."
-        exit(0)
-else:
-    messages = []
-def saveDb():
-    pickle.dump({'messages':messages,'version':thisVersion}, open(os.path.expanduser("~") +'/.ripoffbot_database.p','wb'))
 
 if "--readconfig" in sys.argv:
     if os.path.isfile(configLocation):
@@ -116,7 +104,27 @@ if "--classic" in sys.argv:
     CLASSICMODE = True
 else:
     CLASSICMODE = False
+    
+if "--nodb" in sys.argv:
+    USEDB = False
+else:
+    USEDB = True
 
+if USEDB == True and os.path.isfile(os.path.expanduser("~") +'/.ripoffbot_database.p'):
+    dbLoad = pickle.load(open(os.path.expanduser("~") +'/.ripoffbot_database.p','rb'))
+    if dbLoad['version'] == [0,2,0]:
+        messages = dbLoad['messages']
+    if dbLoad['version'] == [0,3,0,"d"]:
+        messages = dbLoad['messages']
+    else:
+        print "This database was created with an old or unknown version of ripoffbot. Please use the newest version (or correct fork) and try again. If this is not possible, move or delete the file '~/.ripoffbot_database.p' and re-run ripoffbot. A new database will be created automatically."
+        exit(0)
+else:
+    messages = []
+def saveDb():
+    if USEDB == True:
+        pickle.dump({'messages':messages,'version':thisVersion}, open(os.path.expanduser("~") +'/.ripoffbot_database.p','wb'))
+    
 plain = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s = ssl.wrap_socket(plain) if SSL else plain
 

@@ -1,0 +1,7 @@
+{
+    "server": "irc.freenode.net",
+    "channels": "#ripoffbot-test-channel",
+    "nickname": "%ADD NICK HERE AND REMOVE THE % SIGN",
+    "nick-password": "%ADD PASSWORD HERE AND REMOVE THE % SIGN (although this one is optional)",
+    "use_ssl": true
+}
