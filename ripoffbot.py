@@ -26,6 +26,7 @@ import pickle
 from datetime import datetime
 import timestampcompare
 import json
+import getpass
 
 if "/" in __file__:
     configLocation = os.path.dirname(__file__) +"/config.json"
@@ -106,7 +107,7 @@ else:
     NICK = sys.argv[4]
     
     if "--password" in sys.argv:
-        PASSWORD = raw_input("Password? ")
+        PASSWORD = getpass.getpass("Password? ")
     else:
         PASSWORD = False
 
