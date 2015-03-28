@@ -71,7 +71,7 @@ if "--readconfig" in sys.argv:
         except:
             print "Failed to decode configuration file."
             if "d" in thisVersion:
-                print sys.exec_info()[0]
+                print sys.exc_info()[0]
             exit(0)
         try:
             HOST = str(config["server"])
