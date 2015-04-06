@@ -116,6 +116,8 @@ if USEDB == True and os.path.isfile(os.path.expanduser("~") +'/.ripoffbot_databa
         messages = dbLoad['messages']
     if dbLoad['version'] == [0,3,0]:
         messages = dbLoad['messages']
+    if dbLoad['version'] == [0,3,1,"d"] or dbLoad['version'] == [0,3,1]: # Remember to remove developer version file-reading when version 0.3.1 comes out.
+        messages = dbLoad['messages']
     else:
         print "This database was created with an old or unknown version of ripoffbot. Please use the newest version (or correct fork) and try again. If this is not possible, move or delete the file '~/.ripoffbot_database.p' and re-run ripoffbot. A new database will be created automatically."
         exit(0)
