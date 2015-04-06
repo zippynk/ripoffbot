@@ -172,6 +172,8 @@ def got_message(message):
             else:
                 if writing == True:
                     name = name +i
+    else:
+        name = False
     if words[1] == '001' and not connected:
         # As per section 5.1 of the RFC, 001 is the numeric response for
         # a successful connection/welcome message.
@@ -184,7 +186,7 @@ def got_message(message):
         s.sendall("NICK %s\r\n"%(NICK))
         s.sendall("JOIN %s\r\n"%(CHANNEL))
         print "Joining..."
-    elif words[1] == 'PRIVMSG' and (words[2] == CHANNEL or words[2] == NICK) and ('@tell' in words[3] or ('@privtell' in words[3] and not CLASSICMODE)) and connected and len(words) >= 5:
+    elif words[1] == 'PRIVMSG' and (words[2] == CHANNEL or words[2] == NICK) and ('@tell' in words[3] or ('@privtell' in words[3] and not CLASSICMODE)) and connected and len(words) >= 5 and not name == False:
         # Someone probably said `@tell`.
         if words[4] == NICK:
             s.sendall("PRIVMSG %s :"%(CHANNEL if words[2] == CHANNEL else name) +name +": I'm right here!" + "\r\n")
@@ -195,7 +197,7 @@ def got_message(message):
                 messages.append([name,words[4],' '.join(words[5:len(words)]),'@privtell' in words[3],words[2] == CHANNEL,datetime.now()])
                 saveDb()
                 s.sendall("PRIVMSG %s :"%(CHANNEL if words[2] == CHANNEL else name) +name +": I'll let them know!" + "\r\n")
-    elif words[1] == 'PRIVMSG' and (words[2] == CHANNEL or words[2] == NICK) and '@help' in words[3] and connected and not CLASSICMODE:
+    elif words[1] == 'PRIVMSG' and (words[2] == CHANNEL or words[2] == NICK) and '@help' in words[3] and connected and not CLASSICMODE and not name == False:
         s.sendall("PRIVMSG %s :"%(CHANNEL if words[2] == CHANNEL else name) +"This mailbot uses the ripoffbot software, which is created by Nathan Krantz-Fire (a.k.a zippynk), based on Jokebot by Hardmath123, and loosely ripped off from Aaron Weiss's mailbot." +"\r\n")
         if "d" in thisVersion:
             s.sendall("PRIVMSG %s :"%(CHANNEL if words[2] == CHANNEL else name) +"WARNING: THIS IS A DEVELOPMENT VERSION! USE AT YOUR OWN RISK!" +"\r\n")
@@ -209,7 +211,7 @@ def got_message(message):
         s.sendall("PRIVMSG %s :"%(CHANNEL if words[2] == CHANNEL else name) +"Ripoffbot source code: https://github.com/zippynk/ripoffbot (available under the Mozilla Public License 2.0)" +"\r\n")
         s.sendall("PRIVMSG %s :"%(CHANNEL if words[2] == CHANNEL else name) +"Jokebot source code: https://github.com/hardmath123/jokebot (available under the Unlicense)" +"\r\n")
         s.sendall("PRIVMSG %s :"%(CHANNEL if words[2] == CHANNEL else name) +"Original Mailbot source code: hhttps://github.com/aatxe/mailbot (not licensed at all, but that doesn't matter, since ripoffbot takes no direct code from this mailbot)" +"\r\n")
-    if CLASSICMODE:
+    if CLASSICMODE and not name == False:
         messagesToPop = []
         for i in range(len(messages)):
             if messages[i][1] == name:
@@ -224,7 +226,7 @@ def got_message(message):
             for i in sorted(messagesToPop, reverse=True):
                 messages.pop(i)
             saveDb()
-    else:
+    elif not name == False:
         messagesToPop = []
         for i in range(len(messages)):
             if messages[i][1] == name:
