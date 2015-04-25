@@ -33,7 +33,7 @@ if "/" in __file__:
     configLocation = os.path.dirname(__file__) +"/config.json"
 else:
     configLocation = "config.json"
-thisVersion = [0,3,1] # The version of ripoffbot, as a list of numbers (eg [0,1,0] means "v0.1.0"). A "d" at the end means that the current version is a development version and very well may break at some point.
+thisVersion = [0,3,2,"d"] # The version of ripoffbot, as a list of numbers (eg [0,1,0] means "v0.1.0"). A "d" at the end means that the current version is a development version and very well may break at some point.
 
 if (len(sys.argv) < 5 or len(sys.argv) > 8) and not "--readconfig" in sys.argv:
     print """Usage: python ripoffbot.py <host> <channel (no #)> [--ssl|--plain] <nick> [--classic] [--readconfig] [--password] [--nodb]
@@ -188,47 +188,7 @@ def got_message(message):
         s.sendall("NICK %s\r\n"%(NICK))
         s.sendall("JOIN %s\r\n"%(CHANNEL))
         print "Joining..."
-    elif words[1] == 'PRIVMSG' and (words[2] == CHANNEL or words[2] == NICK) and ('@tell' in words[3] or ('@privtell' in words[3] and not CLASSICMODE)) and connected and len(words) >= 5 and not name == False:
-        # Someone probably said `@tell`.
-        if words[4] == NICK:
-            s.sendall("PRIVMSG %s :"%(CHANNEL if words[2] == CHANNEL else name) +name +": I'm right here!" + "\r\n")
-        else:
-            if '@privtell' in words[3] and words[2] == CHANNEL:
-                s.sendall("PRIVMSG %s :"%(CHANNEL if words[2] == CHANNEL else name) +name +": You can't use @privtell in a public channel - only in private messages. Please use @tell or resend using @privtell in a private message to me. Type @help for more information." + "\r\n")
-            else:
-                messages.append([name,words[4],' '.join(words[5:len(words)]),'@privtell' in words[3],words[2] == CHANNEL,datetime.now()])
-                saveDb()
-                s.sendall("PRIVMSG %s :"%(CHANNEL if words[2] == CHANNEL else name) +name +": I'll let them know!" + "\r\n")
-    elif words[1] == 'PRIVMSG' and (words[2] == CHANNEL or words[2] == NICK) and '@help' in words[3] and connected and not CLASSICMODE and not name == False:
-        s.sendall("PRIVMSG %s :"%(CHANNEL if words[2] == CHANNEL else name) +"This mailbot uses the ripoffbot software, which is created by Nathan Krantz-Fire (a.k.a zippynk), based on Jokebot by Hardmath123, and loosely ripped off from Aaron Weiss's mailbot." +"\r\n")
-        if "d" in thisVersion:
-            s.sendall("PRIVMSG %s :"%(CHANNEL if words[2] == CHANNEL else name) +"WARNING: THIS IS A DEVELOPMENT VERSION! USE AT YOUR OWN RISK!" +"\r\n")
-        s.sendall("PRIVMSG %s :"%(CHANNEL if words[2] == CHANNEL else name) +" " +"\r\n")
-        s.sendall("PRIVMSG %s :"%(CHANNEL if words[2] == CHANNEL else name) +"Commands:" +"\r\n")
-        s.sendall("PRIVMSG %s :"%(CHANNEL if words[2] == CHANNEL else name) +" " +"\r\n")
-        s.sendall("PRIVMSG %s :"%(CHANNEL if words[2] == CHANNEL else name) +"`@tell recipient message` delivers `message` to `recipient` when they are next \"seen\" saying something. If they are \"seen\" next in a private message to ripoffbot, `message` will be delivered in a reply to that message, and ripoffbot will send a notification message to the sender in the from that the sender sent the original `@tell` command (either in the public channel or via a private message)." +"\r\n")
-        s.sendall("PRIVMSG %s :"%(CHANNEL if words[2] == CHANNEL else name) +"`@privtell recipient message` delivers `message` to `recipient` via a private message when they are next \"seen\" saying something. Wherever they are seen, `message` will still be sent to them privately. Upon delivery, ripoffbot will privately send a notification message to the sender." +"\r\n")
-        s.sendall("PRIVMSG %s :"%(CHANNEL if words[2] == CHANNEL else name) +"`@help` displays a message similar to this guide, but tailored to IRC users." +"\r\n")
-        s.sendall("PRIVMSG %s :"%(CHANNEL if words[2] == CHANNEL else name) +" " +"\r\n")
-        s.sendall("PRIVMSG %s :"%(CHANNEL if words[2] == CHANNEL else name) +"Ripoffbot source code: https://github.com/zippynk/ripoffbot (available under the Mozilla Public License 2.0)" +"\r\n")
-        s.sendall("PRIVMSG %s :"%(CHANNEL if words[2] == CHANNEL else name) +"Jokebot source code: https://github.com/hardmath123/jokebot (available under the Unlicense)" +"\r\n")
-        s.sendall("PRIVMSG %s :"%(CHANNEL if words[2] == CHANNEL else name) +"Original Mailbot source code: hhttps://github.com/aatxe/mailbot (not licensed at all, but that doesn't matter, since ripoffbot takes no direct code from this mailbot)" +"\r\n")
-    if CLASSICMODE and not name == False:
-        messagesToPop = []
-        for i in range(len(messages)):
-            if messages[i][1] == name:
-                deltastring = timestampcompare.usefulComparison(datetime.now(),messages[i][5])
-                if messages[i][3] == False:
-                    s.sendall("PRIVMSG %s :"%(CHANNEL if words[2] == CHANNEL else name) +name +": " +deltastring +', ' +messages[i][0] +' said ' +messages[i][2] + "\r\n")
-                else:
-                    s.sendall("PRIVMSG %s :"%(name) +name +": " +deltastring +', ' +messages[i][0] +' said ' +messages[i][2] + "\r\n")
-                    s.sendall("PRIVMSG %s :"%(messages[i][0]) +messages[i][0] +": Notified " +name +".\r\n")
-                messagesToPop.append(i)
-        if len(messagesToPop) > 0:
-            for i in sorted(messagesToPop, reverse=True):
-                messages.pop(i)
-            saveDb()
-    elif not name == False:
+    if not (CLASSICMODE or name == False):
         messagesToPop = []
         for i in range(len(messages)):
             if messages[i][1] == name:
@@ -240,6 +200,46 @@ def got_message(message):
                             s.sendall("PRIVMSG %s :"%(CHANNEL) +messages[i][0] +": Notified " +name +".\r\n")
                         else: # If the message was not sent via a public channel, meaning it was sent via a private message.
                             s.sendall("PRIVMSG %s :"%(messages[i][0]) +messages[i][0] +": Notified " +name +".\r\n")
+                else:
+                    s.sendall("PRIVMSG %s :"%(name) +name +": " +deltastring +', ' +messages[i][0] +' said ' +messages[i][2] + "\r\n")
+                    s.sendall("PRIVMSG %s :"%(messages[i][0]) +messages[i][0] +": Notified " +name +".\r\n")
+                messagesToPop.append(i)
+        if len(messagesToPop) > 0:
+            for i in sorted(messagesToPop, reverse=True):
+                messages.pop(i)
+            saveDb()
+    if words[1] == 'PRIVMSG' and (words[2] == CHANNEL or words[2] == NICK) and ('@tell' in words[3] or ('@privtell' in words[3] and not CLASSICMODE)) and connected and len(words) >= 5 and not name == False:
+        # Someone probably said `@tell`.
+        if words[4] == NICK:
+            s.sendall("PRIVMSG %s :"%(CHANNEL if words[2] == CHANNEL else name) +name +": I'm right here!" + "\r\n")
+        else:
+            if '@privtell' in words[3] and words[2] == CHANNEL:
+                s.sendall("PRIVMSG %s :"%(CHANNEL if words[2] == CHANNEL else name) +name +": You can't use @privtell in a public channel - only in private messages. Please use @tell or resend using @privtell in a private message to me. Type @mailhelp for more information." + "\r\n")
+            else:
+                messages.append([name,words[4],' '.join(words[5:len(words)]),'@privtell' in words[3],words[2] == CHANNEL,datetime.now()])
+                saveDb()
+                s.sendall("PRIVMSG %s :"%(CHANNEL if words[2] == CHANNEL else name) +name +": I'll let them know!" + "\r\n")
+    elif words[1] == 'PRIVMSG' and (words[2] == CHANNEL or words[2] == NICK) and '@mailhelp' in words[3] and connected and not CLASSICMODE and not name == False:
+        s.sendall("PRIVMSG %s :"%(CHANNEL if words[2] == CHANNEL else name) +"This mailbot uses the ripoffbot software, which is created by Nathan Krantz-Fire (a.k.a zippynk), based on Jokebot by Hardmath123, and loosely ripped off from Aaron Weiss's mailbot." +"\r\n")
+        if "d" in thisVersion:
+            s.sendall("PRIVMSG %s :"%(CHANNEL if words[2] == CHANNEL else name) +"WARNING: THIS IS A DEVELOPMENT VERSION! USE AT YOUR OWN RISK!" +"\r\n")
+        s.sendall("PRIVMSG %s :"%(CHANNEL if words[2] == CHANNEL else name) +" " +"\r\n")
+        s.sendall("PRIVMSG %s :"%(CHANNEL if words[2] == CHANNEL else name) +"Commands:" +"\r\n")
+        s.sendall("PRIVMSG %s :"%(CHANNEL if words[2] == CHANNEL else name) +" " +"\r\n")
+        s.sendall("PRIVMSG %s :"%(CHANNEL if words[2] == CHANNEL else name) +"`@tell recipient message` delivers `message` to `recipient` when they are next \"seen\" saying something. If they are \"seen\" next in a private message to ripoffbot, `message` will be delivered in a reply to that message, and ripoffbot will send a notification message to the sender in the from that the sender sent the original `@tell` command (either in the public channel or via a private message)." +"\r\n")
+        s.sendall("PRIVMSG %s :"%(CHANNEL if words[2] == CHANNEL else name) +"`@privtell recipient message` delivers `message` to `recipient` via a private message when they are next \"seen\" saying something. Wherever they are seen, `message` will still be sent to them privately. Upon delivery, ripoffbot will privately send a notification message to the sender." +"\r\n")
+        s.sendall("PRIVMSG %s :"%(CHANNEL if words[2] == CHANNEL else name) +"`@mailhelp` displays this message." +"\r\n")
+        s.sendall("PRIVMSG %s :"%(CHANNEL if words[2] == CHANNEL else name) +" " +"\r\n")
+        s.sendall("PRIVMSG %s :"%(CHANNEL if words[2] == CHANNEL else name) +"Ripoffbot source code: https://github.com/zippynk/ripoffbot (available under the Mozilla Public License 2.0)" +"\r\n")
+        s.sendall("PRIVMSG %s :"%(CHANNEL if words[2] == CHANNEL else name) +"Jokebot source code: https://github.com/hardmath123/jokebot (available under the Unlicense)" +"\r\n")
+        s.sendall("PRIVMSG %s :"%(CHANNEL if words[2] == CHANNEL else name) +"Original Mailbot source code: hhttps://github.com/aatxe/mailbot (not licensed at all, but that doesn't matter, since ripoffbot takes no direct code from this mailbot)" +"\r\n")
+    if CLASSICMODE and not name == False:
+        messagesToPop = []
+        for i in range(len(messages)):
+            if messages[i][1] == name:
+                deltastring = timestampcompare.usefulComparison(datetime.now(),messages[i][5])
+                if messages[i][3] == False:
+                    s.sendall("PRIVMSG %s :"%(CHANNEL if words[2] == CHANNEL else name) +name +": " +deltastring +', ' +messages[i][0] +' said ' +messages[i][2] + "\r\n")
                 else:
                     s.sendall("PRIVMSG %s :"%(name) +name +": " +deltastring +', ' +messages[i][0] +' said ' +messages[i][2] + "\r\n")
                     s.sendall("PRIVMSG %s :"%(messages[i][0]) +messages[i][0] +": Notified " +name +".\r\n")

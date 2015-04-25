@@ -18,7 +18,7 @@ The `--nodb` flag disables saving messages between sessions.
 
 `@privtell recipient message` delivers `message` to `recipient` via a private message when they are next "seen" saying something. Wherever they are seen, `message` will still be sent to them privately. Upon delivery, ripoffbot will privately send a notification message to the sender. Not available in classic mode.
 
-`@help` displays a message similar to this guide, but tailored to IRC users. Not available in classic mode.
+`@mailhelp` displays a message similar to this guide, but tailored to IRC users. Not available in classic mode.
 
 # Database
 
