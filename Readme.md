@@ -1,5 +1,7 @@
 # Ripoffbot
 
+[![Join the chat at https://gitter.im/zippynk/ripoffbot](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/zippynk/ripoffbot?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 Ripoffbot is an IRC mailbot. It is based off and is of jokebot by Hardmath123, and was modified into  a ripoff of Aaron Weiss's mailbot by Nathan Krantz-Fire (a.k.a zippynk). However, since then, it has gained several new features that said mailbot does not include.
 
 To run ripoffbot, type `python ripoffbot.py <host> <channel (no #)> [--ssl|--plain] <nick> [--classic] [--readconfig] [--password] [--nodb]` into a terminal, replacing the placeholders with your configuration.
