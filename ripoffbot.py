@@ -112,15 +112,13 @@ else:
 
 if USEDB == True and os.path.isfile(os.path.expanduser("~") +'/.ripoffbot_database.p'):
     dbLoad = pickle.load(open(os.path.expanduser("~") +'/.ripoffbot_database.p','rb'))
-    if 'd' in thisVersion: # debug
-        print dbLoad # debug
     if dbLoad['version'] == [0,2,0]:
         messages = dbLoad['messages']
     elif dbLoad['version'] == [0,3,0]:
         messages = dbLoad['messages']
     elif dbLoad['version'] == [0,3,1]:
         messages = dbLoad['messages']
-    elif dbLoad['version'] == [0,3,2,"d"]:
+    elif dbLoad['version'] == [0,4,0,"d"]:
         messages = dbLoad['messages']
     else:
         print "This database was created with an old or unknown version of ripoffbot. Please use the newest version (or correct fork) and try again. If this is not possible or does not work, move or delete the file '~/.ripoffbot_database.p' and re-run ripoffbot. A new database will be created automatically. You may also want to try running tools/recoverDeveloperVersion.py to recover a script marked with a developer version tag."

@@ -29,14 +29,19 @@ if not raw_input("Are you sure you want to proceed? (y/n) ").lower() in ["yes","
     print "Aborting."
     exit(0)
 
-
-dbLoad = pickle.load(open(os.path.expanduser("~") +'/.ripoffbot_database.p','rb'))
+try:
+    dbLoad = pickle.load(open(os.path.expanduser("~") +'/.ripoffbot_database.p','rb'))
+except IOError:
+    print "No database found."
+    exit(0)
 
 if dbLoad['version'] == [0,3,0,"d"]:
     messages = dbLoad['messages']
 elif dbLoad['version'] == [0,3,1,"d"]:
     messages = dbLoad['messages']
 elif dbLoad['version'] == [0,3,2,"d"]:
+    messages = dbLoad['messages']
+elif dbLoad['version'] == [0,4,0,"d"]:
     messages = dbLoad['messages']
 elif not "d" in dbLoad['version']:
     print "This database is not a developer version."

@@ -31,17 +31,19 @@ if os.path.isfile(os.path.expanduser("~") +'/.ripoffbot_database.p'):
         messages = dbLoad['messages']
     elif dbLoad['version'] == [0,3,1]:
         messages = dbLoad['messages']
-    elif dbLoad['version'] == [0,3,2,"d"]:
+    elif dbLoad['version'] == [0,4,0,"d"]:
         messages = dbLoad['messages']
     else:
         print "This database was created with an old or unknown version of ripoffbot. Please use the newest version (or correct fork) and try again. If this is not possible or does not work, move or delete the file '~/.ripoffbot_database.p' and re-run ripoffbot. A new database will be created automatically. You may also want to try running recoverDeveloperVersion.py to recover a script marked with a developer version tag."
         exit(0)
 else:
-    messages = []
+    print "No database found."
+    exit(0)
+
 def saveDb(): # not needed for current functionality, but keeping just in case
     if USEDB == True:
         pickle.dump({'messages':messages,'version':thisVersion}, open(os.path.expanduser("~") +'/.ripoffbot_database.p','wb'))
 
+print "Created with ripoffbot version: " +str(dbLoad['version'])
 for i in messages:
-    print "Created with ripoffbot version: " +str(dbLoad['version'])
-    print "{0} -> {1} - {2} ({3}, {4}): {5}".format(i[0],i[1],str(i[5]),"Sent publically" if i[4] else "Sent privately","To be delivered publically" if i[3] else "To be delivered privately",i[2])
+    print "{0} -> {1} - {2} ({3}, {4}): {5}".format(i[0],i[1],str(i[5]),"Sent publically" if i[4] else "Sent privately","To be delivered privately" if i[3] else "To be delivered publically",i[2])
