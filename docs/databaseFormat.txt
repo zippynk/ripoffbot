@@ -1,0 +1,18 @@
+Format of database:
+ - Python pickle
+   - Dictionary
+     - Key "version":
+       - List of integers and strings
+         - First 3 indicate version (eg [1,0,1] indicates v1.0.1)
+         - All others indicate version flags. Current flags:
+           - "d" means a development/testing version
+     - Key "messages":
+       - List of messages
+       - Each message is a list
+         - First item: Sender's nick (string)
+         - Second item: Recipient's nick (string)
+         - Third item: Message contents (string)
+         - Fourth item: Was the message meant to be delivered privately? (boolean)
+         - Fifth item: Was the message sent in a public channel?
+         - Sixth item: Time sent (datetime.datetime)
+

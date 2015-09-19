@@ -40,6 +40,7 @@ elif dbLoad['version'] == [0,3,2,"d"]:
     messages = dbLoad['messages']
 elif not "d" in dbLoad['version']:
     print "This database is not a developer version."
+    exit(0)
 else:
     print "This database was created with an old or unknown version of ripoffbot, and the developer recovery script could not recover it. Please use the newest version (or correct fork) and try again. If this is not possible or does not work, move or delete the file '~/.ripoffbot_database.p' and re-run ripoffbot. A new database will be created automatically."
     exit(0)
