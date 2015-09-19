@@ -22,9 +22,17 @@ The `--nodb` flag disables saving messages between sessions.
 
 `@mailhelp` displays a message similar to this guide, but tailored to IRC users. Not available in classic mode.
 
+# Tools
+
+To see all messages currently stored in the ripoffbot database, run `tools/printDatabase.py`.
+
+To recover a database with a developer tag on it, run `tools/recoverDeveloperVersion.py`.
+
 # Database
 
 Ripoffbot stores messages in a file titled `.ripoffbot_database.p` in the home directory of the account that runs it.
+
+Information about how this database works can be found in docs/databaseFormat.txt.
 
 # License
 
