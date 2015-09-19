@@ -33,7 +33,7 @@ if "/" in __file__:
     configLocation = os.path.dirname(__file__) +"/config.json"
 else:
     configLocation = "config.json"
-thisVersion = [0,4,0,"d"] # The version of ripoffbot, as a list of numbers (eg [0,1,0] means "v0.1.0"). A "d" at the end means that the current version is a development version and very well may break at some point.
+thisVersion = [0,4,0] # The version of ripoffbot, as a list of numbers (eg [0,1,0] means "v0.1.0"). A "d" at the end means that the current version is a development version and very well may break at some point.
 
 if (len(sys.argv) < 5 or len(sys.argv) > 8) and not "--readconfig" in sys.argv:
     print """Usage: python ripoffbot.py <host> <channel (no #)> [--ssl|--plain] <nick> [--classic] [--readconfig] [--password] [--nodb]
@@ -118,7 +118,7 @@ if USEDB == True and os.path.isfile(os.path.expanduser("~") +'/.ripoffbot_databa
         messages = dbLoad['messages']
     elif dbLoad['version'] == [0,3,1]:
         messages = dbLoad['messages']
-    elif dbLoad['version'] == [0,4,0,"d"]:
+    elif dbLoad['version'] == [0,4,0]:
         messages = dbLoad['messages']
     else:
         print "This database was created with an old or unknown version of ripoffbot. Please use the newest version (or correct fork) and try again. If this is not possible or does not work, move or delete the file '~/.ripoffbot_database.p' and re-run ripoffbot. A new database will be created automatically. You may also want to try running tools/recoverDeveloperVersion.py to recover a script marked with a developer version tag."
