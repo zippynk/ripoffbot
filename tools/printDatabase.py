@@ -47,4 +47,5 @@ def saveDb(): # not needed for current functionality, but keeping just in case
         pickle.dump({'messages':messages,'version':thisVersion}, open(os.path.expanduser("~") +'/.ripoffbot_database.p','wb'))
 
 for i in messages:
+    print "Created with ripoffbot version: " +str(dbLoad['version'])
     print "{0} -> {1} - {2} ({3}, {4}): {5}".format(i[0],i[1],str(i[5]),"Sent publically" if i[4] else "Sent privately","To be delivered publically" if i[3] else "To be delivered privately",i[2])
