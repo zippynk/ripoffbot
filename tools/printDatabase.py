@@ -12,11 +12,7 @@ import os
 import pickle
 from datetime import datetime
 
-if "/" in __file__:
-    configLocation = os.path.dirname(__file__) +"/config.json"
-else:
-    configLocation = "config.json"
-thisVersion = [0,3,2,"d"] # The version of ripoffbot, as a list of numbers (eg [0,1,0] means "v0.1.0"). A "d" at the end means that the current version is a development version and very well may break at some point.
+thisVersion = [0,4,0,"d"] # The version of ripoffbot, as a list of numbers (eg [0,1,0] means "v0.1.0"). A "d" at the end means that the current version is a development version and very well may break at some point.
 
 # Begin dev edition code.
 if "d" in thisVersion:
